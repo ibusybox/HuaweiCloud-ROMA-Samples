@@ -19,10 +19,11 @@ while True:
 
     if msg is None:
         continue
-    if msg.error():
+    if not msg.error():
+        print('Received message: {}'.format(msg.value().decode('utf-8')))
+    elif msg.error().code() == KafkaError._PARTITION_EOF:
+        print("Consumer error: reached the broker EOF")
+    else:
         print("Consumer error: {}".format(msg.error()))
-        continue
-
-    print('Received message: {}'.format(msg.value().decode('utf-8')))
 
 c.close()
